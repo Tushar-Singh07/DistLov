@@ -1,0 +1,40 @@
+import dotenv from 'dotenv';
+import path from 'path';
+
+dotenv.config({ path: path.resolve(process.cwd(), '.env') });
+
+export const env = {
+  PORT: parseInt(process.env.PORT || '5000', 10),
+  NODE_ENV: process.env.NODE_ENV || 'development',
+  CLIENT_URL: process.env.CLIENT_URL || 'http://localhost:5173',
+  MONGODB_URI: process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/secureconnect',
+  AUTH_SECRET: process.env.AUTH_SECRET || 'dev_default_auth_secret',
+  ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET || 'dev_default_access_secret',
+  REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET || 'dev_default_refresh_secret',
+  COOKIE_SECRET: process.env.COOKIE_SECRET || 'dev_default_cookie_secret',
+  ACCESS_TOKEN_EXPIRES_IN: process.env.ACCESS_TOKEN_EXPIRES_IN || '15m',
+  REFRESH_TOKEN_EXPIRES_IN: process.env.REFRESH_TOKEN_EXPIRES_IN || '7d',
+  SMTP_HOST: process.env.SMTP_HOST || 'localhost',
+  SMTP_PORT: parseInt(process.env.SMTP_PORT || '1025', 10),
+  SMTP_USER: process.env.SMTP_USER || '',
+  SMTP_PASSWORD: process.env.SMTP_PASSWORD || '',
+  SMTP_FROM: process.env.SMTP_FROM || 'no-reply@secureconnect.local',
+  PASSWORD_RESET_EXPIRES_MINUTES: parseInt(process.env.PASSWORD_RESET_EXPIRES_MINUTES || '15', 10),
+  EMAIL_VERIFICATION_EXPIRES_MINUTES: parseInt(process.env.EMAIL_VERIFICATION_EXPIRES_MINUTES || '1440', 10),
+  MAX_FILE_SIZE_BYTES: parseInt(process.env.MAX_FILE_SIZE_BYTES || '52428800', 10),
+  MESSAGE_EDIT_WINDOW_MINUTES: parseInt(process.env.MESSAGE_EDIT_WINDOW_MINUTES || '15', 10),
+  UPLOAD_DIR: process.env.UPLOAD_DIR || './uploads',
+  MAX_FILE_SIZE_MB: parseInt(process.env.MAX_FILE_SIZE_MB || '25', 10),
+  MAX_IMAGE_SIZE_MB: parseInt(process.env.MAX_IMAGE_SIZE_MB || '10', 10),
+  MAX_VIDEO_SIZE_MB: parseInt(process.env.MAX_VIDEO_SIZE_MB || '50', 10),
+  MAX_AUDIO_SIZE_MB: parseInt(process.env.MAX_AUDIO_SIZE_MB || '25', 10),
+  MAX_DOCUMENT_SIZE_MB: parseInt(process.env.MAX_DOCUMENT_SIZE_MB || '25', 10),
+  MAX_ATTACHMENTS_PER_MESSAGE: parseInt(process.env.MAX_ATTACHMENTS_PER_MESSAGE || '10', 10),
+  CALL_RING_TIMEOUT_SECONDS: parseInt(process.env.CALL_RING_TIMEOUT_SECONDS || '30', 10),
+  VITE_WEBRTC_STUN_URL: process.env.VITE_WEBRTC_STUN_URL || 'stun:stun.l.google.com:19302',
+  CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME || '',
+  CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY || '',
+  CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET || '',
+  CLOUDINARY_FOLDER: process.env.CLOUDINARY_FOLDER || 'distlov_media',
+  CLOUDINARY_UPLOAD_PRESET: process.env.CLOUDINARY_UPLOAD_PRESET || '',
+};
