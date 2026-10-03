@@ -45,30 +45,42 @@ export const registerUser = async (input: RegisterInput): Promise<{ message: str
   // Hash Password
   const passwordHash = await hashPassword(input.password);
 
-  // Generate Email Verification Token
-  const rawVerificationToken = generateSecureToken(32);
-  const emailVerificationTokenHash = hashToken(rawVerificationToken);
-  const emailVerificationExpiresAt = new Date(
-    Date.now() + env.EMAIL_VERIFICATION_EXPIRES_MINUTES * 60 * 1000
-  );
+  // Check if real SMTP provider is configured
+  const hasSmtpConfigured = Boolean(env.SMTP_USER && env.SMTP_PASSWORD);
+  const isEmailVerified = !hasSmtpConfigured;
+
+  let rawVerificationToken = '';
+  let emailVerificationTokenHash: string | undefined = undefined;
+  let emailVerificationExpiresAt: Date | undefined = undefined;
+
+  if (hasSmtpConfigured) {
+    rawVerificationToken = generateSecureToken(32);
+    emailVerificationTokenHash = hashToken(rawVerificationToken);
+    emailVerificationExpiresAt = new Date(
+      Date.now() + env.EMAIL_VERIFICATION_EXPIRES_MINUTES * 60 * 1000
+    );
+  }
 
   const newUser = new UserModel({
     name: input.name.trim(),
     username: usernameNormalized,
     email: emailNormalized,
     passwordHash,
-    emailVerified: false,
+    emailVerified: isEmailVerified,
     emailVerificationTokenHash,
     emailVerificationExpiresAt,
   });
 
   await newUser.save();
 
-  // Dispatch Verification Email
-  await sendVerificationEmail(newUser.email, newUser.name, rawVerificationToken);
+  if (hasSmtpConfigured) {
+    await sendVerificationEmail(newUser.email, newUser.name, rawVerificationToken);
+  }
 
   return {
-    message: 'Account created successfully. Please check your email to verify your account.',
+    message: hasSmtpConfigured
+      ? 'Account created successfully. Please check your email to verify your account.'
+      : 'Account created successfully. You can now log in.',
     email: newUser.email,
   };
 };
@@ -120,10 +132,17 @@ export const loginUser = async (
     throw err;
   }
 
+  const hasSmtpConfigured = Boolean(env.SMTP_USER && env.SMTP_PASSWORD);
+
   if (!user.emailVerified) {
-    const err: CustomError = new Error('Email verification required. Please verify your email before logging in.');
-    err.statusCode = 403;
-    throw err;
+    if (!hasSmtpConfigured) {
+      user.emailVerified = true;
+      await user.save();
+    } else {
+      const err: CustomError = new Error('Email verification required. Please verify your email before logging in.');
+      err.statusCode = 403;
+      throw err;
+    }
   }
 
   user.status = 'online';
