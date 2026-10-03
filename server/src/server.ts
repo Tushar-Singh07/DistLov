@@ -27,7 +27,15 @@ if (env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-// 2. Mount API Routes
+// 2. Mount Root & API Routes
+app.get('/', (req, res) => {
+  res.json({
+    status: 'online',
+    message: '🚀 SecureConnect Express API & Socket.IO Server is Live!',
+    health: '/api/health',
+  });
+});
+
 app.use('/api', apiRoutes);
 
 // 3. Centralized Error & 404 Handlers
